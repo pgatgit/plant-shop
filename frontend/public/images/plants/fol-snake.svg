@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" role="img" aria-labelledby="t">
+<title id="t">Illustration of a Snake Plant &#39;Laurentii&#39;</title>
+<rect width="200" height="200" rx="16" fill="hsl(107 35% 95%)"/>
+<ellipse cx="100" cy="182" rx="46" ry="6" fill="#00000014"/>
+<path d="M100 128 L73.6 119.8" stroke="hsl(107 35% 26%)" stroke-width="2.5"/><ellipse cx="67" cy="117.7" rx="15" ry="22.6" transform="rotate(-72.7 67 117.7)" fill="hsl(115 40% 44%)"/><path d="M100 128 L77.2 98.1" stroke="hsl(107 35% 26%)" stroke-width="2.5"/><ellipse cx="71.5" cy="90.6" rx="14.1" ry="27.6" transform="rotate(-37.3 71.5 90.6)" fill="hsl(107 45% 34%)"/><path d="M100 128 L102 96.9" stroke="hsl(107 35% 26%)" stroke-width="2.5"/><ellipse cx="102.5" cy="89.2" rx="15.7" ry="26.2" transform="rotate(3.6 102.5 89.2)" fill="hsl(115 40% 44%)"/><path d="M100 128 L119.6 101.1" stroke="hsl(107 35% 26%)" stroke-width="2.5"/><ellipse cx="124.5" cy="94.3" rx="14.4" ry="23.6" transform="rotate(36 124.5 94.3)" fill="hsl(107 45% 34%)"/><path d="M100 128 L126.2 117.3" stroke="hsl(107 35% 26%)" stroke-width="2.5"/><ellipse cx="132.8" cy="114.7" rx="13" ry="25.8" transform="rotate(67.8 132.8 114.7)" fill="hsl(115 40% 44%)"/>
+<path d="M66 128 H134 L126 180 H74 Z" fill="#5d6b78"/>
+<rect x="62" y="124" width="76" height="12" rx="3" fill="#5d6b78"/>
+<rect x="62" y="124" width="76" height="4" rx="2" fill="#ffffff33"/>
+
+</svg>

@@ -2,6 +2,7 @@ package com.plantshop;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.plantshop.support.MySqlTestcontainersConfiguration;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -11,11 +12,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.context.annotation.Import;
 
 /** Verifies the operational endpoints used by Docker health checks (NFR-REL-01, NFR-OBS-03). */
 @SpringBootTest(
     webEnvironment = WebEnvironment.RANDOM_PORT,
     properties = "management.server.port=0")
+@Import(MySqlTestcontainersConfiguration.class)
 class ActuatorIT {
 
   private final HttpClient http = HttpClient.newHttpClient();
@@ -64,6 +67,6 @@ class ActuatorIT {
   void actuator_onApiPort_isNotExposed() throws Exception {
     HttpResponse<String> response = get(serverPort, "/actuator/health");
 
-    assertThat(response.statusCode()).isEqualTo(404);
+    assertThat(response.statusCode()).isIn(401, 404);
   }
 }

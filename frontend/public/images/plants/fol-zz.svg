@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" role="img" aria-labelledby="t">
+<title id="t">Illustration of a ZZ Plant</title>
+<rect width="200" height="200" rx="16" fill="hsl(135 35% 95%)"/>
+<ellipse cx="100" cy="182" rx="46" ry="6" fill="#00000014"/>
+<path d="M100 128 L73.1 118.7" stroke="hsl(135 35% 26%)" stroke-width="2.5"/><ellipse cx="66.3" cy="116.4" rx="15.5" ry="23.1" transform="rotate(-71 66.3 116.4)" fill="hsl(143 40% 44%)"/><path d="M100 128 L74.1 107.4" stroke="hsl(135 35% 26%)" stroke-width="2.5"/><ellipse cx="67.6" cy="102.2" rx="17.6" ry="22.1" transform="rotate(-51.5 67.6 102.2)" fill="hsl(135 45% 34%)"/><path d="M100 128 L89.3 102.7" stroke="hsl(135 35% 26%)" stroke-width="2.5"/><ellipse cx="86.6" cy="96.3" rx="15.1" ry="25.4" transform="rotate(-22.9 86.6 96.3)" fill="hsl(143 40% 44%)"/><path d="M100 128 L98.8 95.8" stroke="hsl(135 35% 26%)" stroke-width="2.5"/><ellipse cx="98.5" cy="87.8" rx="17.4" ry="22.5" transform="rotate(-2.2 98.5 87.8)" fill="hsl(135 45% 34%)"/><path d="M100 128 L109.3 101.6" stroke="hsl(135 35% 26%)" stroke-width="2.5"/><ellipse cx="111.6" cy="95" rx="17" ry="24.5" transform="rotate(19.3 111.6 95)" fill="hsl(143 40% 44%)"/><path d="M100 128 L129.4 103.4" stroke="hsl(135 35% 26%)" stroke-width="2.5"/><ellipse cx="136.8" cy="97.2" rx="14.3" ry="25.9" transform="rotate(50.1 136.8 97.2)" fill="hsl(135 45% 34%)"/><path d="M100 128 L132.9 114.1" stroke="hsl(135 35% 26%)" stroke-width="2.5"/><ellipse cx="141.1" cy="110.6" rx="13" ry="26.7" transform="rotate(67 141.1 110.6)" fill="hsl(143 40% 44%)"/>
+<path d="M66 128 H134 L126 180 H74 Z" fill="#5d6b78"/>
+<rect x="62" y="124" width="76" height="12" rx="3" fill="#5d6b78"/>
+<rect x="62" y="124" width="76" height="4" rx="2" fill="#ffffff33"/>
+
+</svg>

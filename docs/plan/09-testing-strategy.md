@@ -24,7 +24,7 @@ Target distribution (by count): unit ~55 %, slice/component ~25 %, integration ~
 | Unit | JUnit 5, Mockito, AssertJ | Vitest, `@testing-library/react`, `user-event`, `jest-dom` matchers |
 | Slice/Component | `@WebMvcTest` + `spring-security-test` (`jwt()`, `opaqueToken()`), `@DataJpaTest` + Testcontainers | RTL + MSW 2 (node) + `vitest-axe` |
 | Integration | `@SpringBootTest(RANDOM_PORT)`, Testcontainers `mysql:8.4` via `@ServiceConnection` (singleton container, reused across IT classes), WireMock (GitHub), RestClient | — |
-| Contract | springdoc spec export + `openapi-diff` check; Atlassian `swagger-request-validator` (MockMvc) validates IT responses against `docs/api/openapi.yaml` | `openapi-typescript` types → MSW handlers typed against schema (compile-time contract) |
+| Contract | springdoc spec export (OpenAPI 3.0) compared to the committed snapshot; Atlassian `swagger-request-validator-core` 2.x with a small MockMvc adapter (`support/OpenApiContract`) validates IT exchanges against `docs/api/openapi.yaml` (its MockMvc module still targets `javax.servlet`; 3.x needs Java 21). `openapi-diff` breaking-change report: M7 | `openapi-typescript` types → MSW handlers typed against schema (compile-time contract) |
 | Architecture | ArchUnit | ESLint `import/no-restricted-paths` boundaries |
 | E2E | — | Playwright (Chromium desktop + Pixel 7 emulation), `@axe-core/playwright` |
 | Coverage | JaCoCo | Vitest v8 coverage |

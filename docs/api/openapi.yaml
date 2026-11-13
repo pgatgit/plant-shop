@@ -1,0 +1,269 @@
+openapi: 3.0.1
+info:
+  description: "Catalog, name search and cart for the Plant Shop. Errors use RFC 9457\
+    \ Problem Details with a stable `code` property."
+  license:
+    name: Proprietary
+  title: Plant Shop API
+  version: v1
+servers:
+- description: Local
+  url: http://127.0.0.1:8080
+tags:
+- description: Browse and search the plant catalog
+  name: Catalog
+paths:
+  /api/v1/products:
+    get:
+      description: "Returns one page of products. With `q`, only products whose name\
+        \ **starts with** the term are returned, ignoring case and accents. Requires\
+        \ scope `catalog.read`."
+      operationId: listProducts
+      parameters:
+      - description: 0-based page index
+        in: query
+        name: page
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+          minimum: 0
+      - description: Page size (1–48)
+        in: query
+        name: size
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 12
+          maximum: 48
+          minimum: 1
+      - description: Ordering
+        in: query
+        name: sort
+        required: false
+        schema:
+          type: string
+          default: "name,asc"
+          enum:
+          - "name,asc"
+          - "name,desc"
+          - "price,asc"
+          - "price,desc"
+      - description: Name prefix to search for. Trimmed and whitespace-collapsed;
+          2–50 characters after normalisation. Blank means no search.
+        in: query
+        name: q
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PageResponseProduct"
+          description: A page of products
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+          description: "Invalid paging, sort or search parameter"
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+          description: Missing or invalid access token
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+          description: Token lacks scope catalog.read
+      summary: List or search products
+      tags:
+      - Catalog
+components:
+  schemas:
+    Category:
+      type: object
+      properties:
+        code:
+          type: string
+          example: FERNS
+        name:
+          type: string
+          example: Ferns
+      required:
+      - code
+      - name
+    FieldError:
+      type: object
+      description: One rejected request value (validation-failed problems)
+      properties:
+        field:
+          type: string
+          example: size
+        message:
+          type: string
+          example: must be less than or equal to 48
+        rejectedValue:
+          description: "The rejected value, any JSON type"
+          nullable: true
+      required:
+      - field
+      - message
+    PageResponseProduct:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: "#/components/schemas/Product"
+        page:
+          type: integer
+          format: int32
+          example: 0
+        query:
+          type: string
+          example: mon
+          nullable: true
+        size:
+          type: integer
+          format: int32
+          example: 12
+        sort:
+          type: string
+          example: "name,asc"
+        totalElements:
+          type: integer
+          format: int64
+          example: 28
+        totalPages:
+          type: integer
+          format: int32
+          example: 3
+      required:
+      - content
+      - page
+      - size
+      - sort
+      - totalElements
+      - totalPages
+    ProblemDetail:
+      type: object
+      additionalProperties: true
+      description: "RFC 9457 Problem Details. Extension members depend on `code`,\
+        \ e.g. `errors` for validation-failed or `minLength`/`maxLength` for invalid-search-term."
+      properties:
+        code:
+          type: string
+          enum:
+          - validation-failed
+          - malformed-request
+          - invalid-search-term
+          - unauthenticated
+          - forbidden
+          - not-found
+          - method-not-allowed
+          - not-acceptable
+          - unsupported-media-type
+          - internal-error
+          example: validation-failed
+        detail:
+          type: string
+          example: One or more request values are invalid.
+        errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/FieldError"
+        instance:
+          type: string
+          format: uri
+          example: /api/v1/products
+        status:
+          type: integer
+          format: int32
+          example: 400
+        title:
+          type: string
+          example: Validation failed
+        type:
+          type: string
+          format: uri
+          example: https://plantshop.example/problems/validation-failed
+      required:
+      - code
+      - status
+      - title
+      - type
+    Product:
+      type: object
+      properties:
+        category:
+          $ref: "#/components/schemas/Category"
+        currency:
+          type: string
+          enum:
+          - USD
+          example: USD
+        description:
+          type: string
+          example: "Glossy, wavy fronds that unfurl from a central rosette like a\
+            \ nest."
+        id:
+          type: integer
+          format: int64
+          example: 11
+        imagePath:
+          type: string
+          example: /images/plants/frn-birdnest.svg
+        light:
+          type: string
+          enum:
+          - LOW
+          - MEDIUM
+          - BRIGHT_INDIRECT
+          - DIRECT
+        name:
+          type: string
+          example: Bird's Nest Fern
+        petSafe:
+          type: boolean
+          example: true
+        price:
+          type: string
+          format: decimal
+          description: "Unit price, always two decimals"
+          example: "26.99"
+          pattern: "^\\d{1,8}\\.\\d{2}$"
+        sku:
+          type: string
+          example: FRN-BIRDNEST
+        stock:
+          type: integer
+          format: int32
+          example: 3
+          minimum: 0
+        watering:
+          type: string
+          enum:
+          - LOW
+          - MODERATE
+          - HIGH
+      required:
+      - category
+      - currency
+      - description
+      - id
+      - imagePath
+      - light
+      - name
+      - petSafe
+      - price
+      - sku
+      - stock
+      - watering

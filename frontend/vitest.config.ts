@@ -1,5 +1,5 @@
 import { defineConfig, mergeConfig } from 'vitest/config';
-import viteConfig from './vite.config';
+import viteConfig from './vite.config.ts';
 
 // Coverage gates from docs/plan/09-testing-strategy.md §6.
 export default mergeConfig(

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" role="img" aria-labelledby="t">
+<title id="t">Illustration of a Chinese Money Plant</title>
+<rect width="200" height="200" rx="16" fill="hsl(123 35% 95%)"/>
+<ellipse cx="100" cy="182" rx="46" ry="6" fill="#00000014"/>
+<path d="M100 128 L73.6 120" stroke="hsl(123 35% 26%)" stroke-width="2.5"/><ellipse cx="67" cy="118" rx="16.1" ry="23" transform="rotate(-73.2 67 118)" fill="hsl(131 40% 44%)"/><path d="M100 128 L74.8 106.3" stroke="hsl(123 35% 26%)" stroke-width="2.5"/><ellipse cx="68.5" cy="100.9" rx="16.9" ry="26.5" transform="rotate(-49.3 68.5 100.9)" fill="hsl(123 45% 34%)"/><path d="M100 128 L89.7 102.5" stroke="hsl(123 35% 26%)" stroke-width="2.5"/><ellipse cx="87.1" cy="96.2" rx="17.4" ry="22" transform="rotate(-22.1 87.1 96.2)" fill="hsl(131 40% 44%)"/><path d="M100 128 L101 96.6" stroke="hsl(123 35% 26%)" stroke-width="2.5"/><ellipse cx="101.2" cy="88.8" rx="16.5" ry="23" transform="rotate(1.8 101.2 88.8)" fill="hsl(123 45% 34%)"/><path d="M100 128 L111.8 100.1" stroke="hsl(123 35% 26%)" stroke-width="2.5"/><ellipse cx="114.8" cy="93.2" rx="15.9" ry="26.9" transform="rotate(23 114.8 93.2)" fill="hsl(131 40% 44%)"/><path d="M100 128 L121.7 109.7" stroke="hsl(123 35% 26%)" stroke-width="2.5"/><ellipse cx="127.1" cy="105.1" rx="16.3" ry="25.8" transform="rotate(49.8 127.1 105.1)" fill="hsl(123 45% 34%)"/><path d="M100 128 L130.2 119.6" stroke="hsl(123 35% 26%)" stroke-width="2.5"/><ellipse cx="137.7" cy="117.5" rx="15" ry="25.6" transform="rotate(74.4 137.7 117.5)" fill="hsl(131 40% 44%)"/>
+<path d="M66 128 H134 L126 180 H74 Z" fill="#d9d2c5"/>
+<rect x="62" y="124" width="76" height="12" rx="3" fill="#d9d2c5"/>
+<rect x="62" y="124" width="76" height="4" rx="2" fill="#ffffff33"/>
+
+</svg>

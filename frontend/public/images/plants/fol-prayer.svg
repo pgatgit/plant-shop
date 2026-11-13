@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" role="img" aria-labelledby="t">
+<title id="t">Illustration of a Prayer Plant</title>
+<rect width="200" height="200" rx="16" fill="hsl(102 35% 95%)"/>
+<ellipse cx="100" cy="182" rx="46" ry="6" fill="#00000014"/>
+<path d="M100 128 L74.6 116.9" stroke="hsl(102 35% 26%)" stroke-width="2.5"/><ellipse cx="68.3" cy="114.1" rx="17.4" ry="24.4" transform="rotate(-66.4 68.3 114.1)" fill="hsl(110 40% 44%)"/><path d="M100 128 L72.4 103.7" stroke="hsl(102 35% 26%)" stroke-width="2.5"/><ellipse cx="65.4" cy="97.7" rx="13.8" ry="26.7" transform="rotate(-48.7 65.4 97.7)" fill="hsl(102 45% 34%)"/><path d="M100 128 L85.6 94.8" stroke="hsl(102 35% 26%)" stroke-width="2.5"/><ellipse cx="82.1" cy="86.5" rx="13" ry="27.6" transform="rotate(-23.4 82.1 86.5)" fill="hsl(110 40% 44%)"/><path d="M100 128 L100.8 92.4" stroke="hsl(102 35% 26%)" stroke-width="2.5"/><ellipse cx="101" cy="83.5" rx="17.2" ry="22.3" transform="rotate(1.2 101 83.5)" fill="hsl(102 45% 34%)"/><path d="M100 128 L110.7 100.1" stroke="hsl(102 35% 26%)" stroke-width="2.5"/><ellipse cx="113.4" cy="93.1" rx="13.5" ry="23.8" transform="rotate(21 113.4 93.1)" fill="hsl(110 40% 44%)"/><path d="M100 128 L122.8 103.6" stroke="hsl(102 35% 26%)" stroke-width="2.5"/><ellipse cx="128.5" cy="97.5" rx="14.7" ry="25.1" transform="rotate(43 128.5 97.5)" fill="hsl(102 45% 34%)"/><path d="M100 128 L126.5 120.3" stroke="hsl(102 35% 26%)" stroke-width="2.5"/><ellipse cx="133.1" cy="118.3" rx="16.7" ry="27.7" transform="rotate(73.8 133.1 118.3)" fill="hsl(110 40% 44%)"/>
+<path d="M66 128 H134 L126 180 H74 Z" fill="#d9d2c5"/>
+<rect x="62" y="124" width="76" height="12" rx="3" fill="#d9d2c5"/>
+<rect x="62" y="124" width="76" height="4" rx="2" fill="#ffffff33"/>
+
+</svg>
