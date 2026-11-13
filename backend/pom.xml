@@ -28,7 +28,7 @@
     <spotless.version>3.11.0</spotless.version>
     <google-java-format.version>1.28.0</google-java-format.version>
     <checkstyle-plugin.version>3.6.0</checkstyle-plugin.version>
-    <checkstyle.version>10.26.1</checkstyle.version>
+    <checkstyle.version>14.4.0</checkstyle.version>
     <spotbugs-plugin.version>4.10.5.0</spotbugs-plugin.version>
     <findsecbugs.version>1.14.0</findsecbugs.version>
     <jacoco.version>0.8.16</jacoco.version>
