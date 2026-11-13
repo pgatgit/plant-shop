@@ -43,7 +43,7 @@ Sequence: [03 §4.2](03-architecture.md#42-login--deve2e-local-as). Spring Autho
 |---|---|
 | Issuer | `app.auth.local.issuer` (default `http://127.0.0.1:8080`) |
 | Signing key | RSA 2048 generated at startup (tokens invalid after restart — acceptable for dev/e2e) |
-| Endpoints | `/oauth2/authorize`, `/oauth2/token`, `/oauth2/jwks`, `/.well-known/openid-configuration`, `/login`, `/logout` (OIDC RP-initiated logout) |
+| Endpoints | `/oauth2/authorize`, `/oauth2/token`, `/oauth2/jwks`, `/.well-known/openid-configuration`, `/login` (form), `/connect/logout` (OIDC RP-initiated logout; `post_logout_redirect_uri` = `http://127.0.0.1:3000/login`) |
 | Users (in-memory) | `shopper` (all scopes), `viewer` (`catalog.read` only), `e2e-user-1…4` (all scopes, one per Playwright worker). Passwords from env with dev defaults documented in `.env.example`; `{bcrypt}` encoded at startup via `DelegatingPasswordEncoder` |
 | Access token | JWT, 15 min, claims `sub=<username>`, `scope`, `iss`, `aud=plant-api` |
 | Refresh tokens | Not issued to public clients; re-auth via AS session (30 min idle) |
@@ -66,7 +66,7 @@ Redirect URIs are exact-match from env (`APP_AUTH_LOCAL_SPA_REDIRECT_URI`, `APP_
 - Token held in `AuthProvider` React state (closure); never in `localStorage`/`sessionStorage`/cookies; not exposed on `window`.
 - `sessionStorage` holds only the PKCE transaction (`state`, `code_verifier`, `returnTo`) between redirect and callback; deleted immediately after.
 - Reload → re-login (provider usually auto-approves). 401 from API → single-flight re-login.
-- Logout: clear state + `queryClient.clear()`; `local` → redirect to `/logout` on Local AS; `github` → client-side only; the GitHub token is **not** revoked at GitHub (P7 declined — see T4).
+- Logout: clear state + `queryClient.clear()`; `local` → redirect to `/connect/logout?id_token_hint=…&post_logout_redirect_uri=…` on the Local AS; `github` → client-side only; the GitHub token is **not** revoked at GitHub (P7 declined — see T4).
 - CSP restricts script sources to `'self'` (NFR-SEC-10) to reduce XSS token-exfiltration risk.
 
 ## 6. Scopes, authorities, endpoint rules

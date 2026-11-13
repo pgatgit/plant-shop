@@ -31,8 +31,11 @@ spring:
     out-of-order: false
     validate-on-migrate: true
   autoconfigure:
-    # No username/password users: API authentication is bearer-token only (M2).
-    exclude: org.springframework.boot.security.autoconfigure.UserDetailsServiceAutoConfiguration
+    # Users and the Authorization Server are configured explicitly (auth.local, dev/e2e only).
+    exclude:
+      - org.springframework.boot.security.autoconfigure.UserDetailsServiceAutoConfiguration
+      - org.springframework.boot.security.oauth2.server.authorization.autoconfigure.servlet.OAuth2AuthorizationServerAutoConfiguration
+      - org.springframework.boot.security.oauth2.server.authorization.autoconfigure.servlet.OAuth2AuthorizationServerJwtAutoConfiguration
 
 server:
   port: ${SERVER_PORT:8080}
@@ -42,6 +45,23 @@ server:
     include-message: never
 
 app:
+  auth:
+    # github | local | github,local (local only with the dev/e2e profiles)
+    mode: ${APP_AUTH_MODE:github}
+    local:
+      issuer: ${APP_AUTH_LOCAL_ISSUER:http://127.0.0.1:8080}
+      spa-redirect-uri: ${APP_AUTH_LOCAL_SPA_REDIRECT_URI:http://127.0.0.1:3000/auth/callback}
+      swagger-redirect-uri: ${APP_AUTH_LOCAL_SWAGGER_REDIRECT_URI:http://127.0.0.1:8080/swagger-ui/oauth2-redirect.html}
+  github:
+    client-id: ${GITHUB_CLIENT_ID:}
+    client-secret: ${GITHUB_CLIENT_SECRET:}
+    allowed-redirect-uris: ${APP_GITHUB_ALLOWED_REDIRECT_URIS:http://127.0.0.1:3000/auth/callback,http://127.0.0.1:8080/swagger-ui/oauth2-redirect.html}
+  cors:
+    allowed-origins: ${APP_CORS_ALLOWED_ORIGINS:}
+  rate-limit:
+    token-exchange:
+      capacity: ${APP_RATE_LIMIT_TOKEN_EXCHANGE_CAPACITY:10}
+      refill-period: 1m
   swagger:
     enabled: ${APP_SWAGGER_ENABLED:false}
   openapi:
@@ -54,6 +74,10 @@ springdoc:
     version: openapi_3_0
   swagger-ui:
     enabled: ${app.swagger.enabled}
+    persist-authorization: false
+    oauth:
+      client-id: ${GITHUB_CLIENT_ID:}
+      use-pkce-with-authorization-code-grant: true
   default-produces-media-type: application/json
   writer-with-order-by-keys: true
 

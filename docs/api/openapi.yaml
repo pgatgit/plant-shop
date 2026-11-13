@@ -9,10 +9,83 @@ info:
 servers:
 - description: Local
   url: http://127.0.0.1:8080
+security:
+- oauth2: []
 tags:
+- description: The signed-in shopper
+  name: Account
+- description: GitHub sign-in support
+  name: Auth
 - description: Browse and search the plant catalog
   name: Catalog
 paths:
+  /api/v1/auth/token:
+    post:
+      description: OAuth 2.0 token endpoint for the SPA and Swagger UI (Authorization
+        Code + PKCE). The backend adds the GitHub client secret and forwards the request
+        to GitHub. Errors use RFC 6749 §5.2 JSON. Rate limited per client IP.
+      operationId: exchangeToken
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/TokenRequest"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TokenResponse"
+          description: The GitHub access token
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OAuthError"
+          description: "Invalid request, client, grant or grant type"
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+          description: Too many token requests from this client
+        "502":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OAuthError"
+          description: GitHub could not be reached
+      security: []
+      summary: Exchange a GitHub authorization code for an access token
+      tags:
+      - Auth
+  /api/v1/me:
+    get:
+      description: Requires any valid access token.
+      operationId: getMe
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Me"
+          description: The signed-in shopper
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+          description: Missing or invalid access token
+        "503":
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+          description: The identity provider could not validate the token
+      summary: Get the signed-in shopper
+      tags:
+      - Account
   /api/v1/products:
     get:
       description: "Returns one page of products. With `q`, only products whose name\
@@ -83,6 +156,12 @@ paths:
               schema:
                 $ref: "#/components/schemas/ProblemDetail"
           description: Token lacks scope catalog.read
+        "503":
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+          description: The identity provider could not validate the token
       summary: List or search products
       tags:
       - Catalog
@@ -116,6 +195,45 @@ components:
       required:
       - field
       - message
+    Me:
+      type: object
+      properties:
+        avatarUrl:
+          type: string
+          example: https://avatars.githubusercontent.com/u/583231
+          nullable: true
+        displayName:
+          type: string
+          example: Octo Cat
+        ownerId:
+          type: string
+          example: github:583231
+        provider:
+          type: string
+          enum:
+          - github
+          - local
+          example: github
+      required:
+      - displayName
+      - ownerId
+      - provider
+    OAuthError:
+      type: object
+      properties:
+        error:
+          type: string
+          enum:
+          - invalid_request
+          - invalid_client
+          - invalid_grant
+          - unsupported_grant_type
+          - temporarily_unavailable
+        error_description:
+          type: string
+      required:
+      - error
+      - error_description
     PageResponseProduct:
       type: object
       properties:
@@ -171,7 +289,9 @@ components:
           - method-not-allowed
           - not-acceptable
           - unsupported-media-type
+          - rate-limited
           - internal-error
+          - auth-provider-unavailable
           example: validation-failed
         detail:
           type: string
@@ -267,3 +387,57 @@ components:
       - sku
       - stock
       - watering
+    TokenRequest:
+      type: object
+      description: application/x-www-form-urlencoded body
+      properties:
+        client_id:
+          type: string
+        code:
+          type: string
+        code_verifier:
+          type: string
+          maxLength: 128
+          minLength: 43
+        grant_type:
+          type: string
+          enum:
+          - authorization_code
+        redirect_uri:
+          type: string
+          example: http://127.0.0.1:3000/auth/callback
+      required:
+      - client_id
+      - code
+      - code_verifier
+      - grant_type
+      - redirect_uri
+    TokenResponse:
+      type: object
+      properties:
+        access_token:
+          type: string
+        scope:
+          type: string
+          example: read:user
+        token_type:
+          type: string
+          enum:
+          - bearer
+      required:
+      - access_token
+      - scope
+      - token_type
+  securitySchemes:
+    oauth2:
+      description: Authorization Code with PKCE. Local AS (dev/e2e) or GitHub (prod).
+      flows:
+        authorizationCode:
+          authorizationUrl: http://127.0.0.1:8080/oauth2/authorize
+          scopes:
+            cart.read: Read own cart
+            cart.write: Modify own cart
+            catalog.read: Read catalog
+            openid: OpenID Connect
+          tokenUrl: http://127.0.0.1:8080/oauth2/token
+      type: oauth2

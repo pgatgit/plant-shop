@@ -18,3 +18,6 @@ frontend/blob-report/
 .vscode/
 *.iml
 .DS_Store
+
+# Session clone of the GitHub repo (the project itself lives at this root)
+/plant-shop/

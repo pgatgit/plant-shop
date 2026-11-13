@@ -4,8 +4,8 @@ A small, production-grade web store for indoor plants: browse a paged catalog, s
 name (prefix, case- and accent-insensitive) and manage a cart. Every page requires login: GitHub
 in production, local in-memory users for development and E2E.
 
-> **Status:** milestone **M0 (scaffold & tooling)** complete. Features arrive in M1–M6 per the
-> [implementation roadmap](docs/plan/12-implementation-roadmap.md).
+> **Status:** milestones **M0–M2** complete (tooling, catalog API, authentication). The cart API and
+> the SPA follow in M3–M6 per the [implementation roadmap](docs/plan/12-implementation-roadmap.md).
 
 | Part | Tech | Docs |
 |---|---|---|
@@ -24,12 +24,13 @@ docker compose up -d --build --wait
 | URL | What |
 |---|---|
 | <http://127.0.0.1:3000> | The store (SPA) |
-| <http://127.0.0.1:8080> | REST API (Swagger UI from M1) |
+| <http://127.0.0.1:8080/swagger-ui.html> | Swagger UI ("Authorize" with user `shopper`, password `plants-dev-only`) |
 
 Stop with `docker compose down`; reset the database with `docker compose down -v`.
 
 A clean checkout runs the `e2e` profile with local login and needs no secrets. To use GitHub login,
-copy `.env.example` to `.env` and fill in the GitHub section (runbook from M2).
+follow [Run with GitHub login](docs/runbook.md#3-run-with-github-login-on-your-own-machine) in the
+runbook.
 
 ## Development
 
@@ -44,6 +45,8 @@ copy `.env.example` to `.env` and fill in the GitHub section (runbook from M2).
 - Plan and requirements: [docs/plan/](docs/plan/00-overview.md)
 - Architecture decisions: [docs/plan/adr/](docs/plan/adr/001-record-architecture-decisions.md)
 - Decision log: [docs/plan/decision-log.md](docs/plan/decision-log.md)
+- Runbook (run, test, debug, GitHub setup): [docs/runbook.md](docs/runbook.md)
+- API contract: [docs/api/openapi.yaml](docs/api/openapi.yaml)
 
 ## Contributing
 

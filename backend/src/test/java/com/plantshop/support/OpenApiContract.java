@@ -6,14 +6,20 @@ import com.atlassian.oai.validator.OpenApiInteractionValidator;
 import com.atlassian.oai.validator.model.Request;
 import com.atlassian.oai.validator.model.SimpleRequest;
 import com.atlassian.oai.validator.model.SimpleResponse;
+import com.atlassian.oai.validator.report.LevelResolver;
 import com.atlassian.oai.validator.report.ValidationReport;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Collections;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultMatcher;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.util.UriComponentsBuilder;
 
 /**
  * Validates MockMvc request/response pairs against the committed contract {@code
@@ -30,6 +36,12 @@ public final class OpenApiContract {
     private static final OpenApiInteractionValidator VALIDATOR =
         OpenApiInteractionValidator.createForSpecificationUrl(
                 SPEC.toAbsolutePath().normalize().toUri().toString())
+            // MockMvc tests authenticate with post-processors instead of Authorization headers;
+            // token handling is verified by the auth integration tests.
+            .withLevelResolver(
+                LevelResolver.create()
+                    .withLevel("validation.request.security", ValidationReport.Level.IGNORE)
+                    .build())
             .build();
   }
 
@@ -57,15 +69,45 @@ public final class OpenApiContract {
     SimpleRequest.Builder builder =
         new SimpleRequest.Builder(
             Request.Method.valueOf(request.getMethod()), request.getRequestURI());
-    request.getParameterMap().forEach(builder::withQueryParam);
     for (String name : Collections.list(request.getHeaderNames())) {
       builder.withHeader(name, Collections.list(request.getHeaders(name)));
     }
+    MultiValueMap<String, String> query =
+        UriComponentsBuilder.newInstance().query(request.getQueryString()).build().getQueryParams();
+    query.forEach(
+        (name, values) ->
+            builder.withQueryParam(
+                name,
+                values.stream().map(v -> URLDecoder.decode(v, StandardCharsets.UTF_8)).toList()));
     byte[] body = request.getContentAsByteArray();
     if (body != null && body.length > 0) {
       builder.withBody(new String(body, StandardCharsets.UTF_8));
+    } else if (isForm(request)) {
+      // MockMvc .param(...) on a form POST: parameters that are not in the query string are the
+      // form body.
+      StringBuilder form = new StringBuilder();
+      request
+          .getParameterMap()
+          .forEach(
+              (name, values) -> {
+                if (!query.containsKey(name)) {
+                  for (String value : values) {
+                    form.append(form.isEmpty() ? "" : "&")
+                        .append(URLEncoder.encode(name, StandardCharsets.UTF_8))
+                        .append('=')
+                        .append(URLEncoder.encode(value, StandardCharsets.UTF_8));
+                  }
+                }
+              });
+      builder.withBody(form.toString());
     }
     return builder.build();
+  }
+
+  private static boolean isForm(MockHttpServletRequest request) {
+    return request.getContentType() != null
+        && MediaType.APPLICATION_FORM_URLENCODED.isCompatibleWith(
+            MediaType.parseMediaType(request.getContentType()));
   }
 
   private static SimpleResponse toResponse(MvcResult result) throws Exception {

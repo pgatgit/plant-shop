@@ -28,7 +28,7 @@
 
 - **AC-02.1** Given I am signed in, when I choose "Sign out", then the in-memory token and all cached server data are cleared and I see `/login` with "You have been signed out".
 - **AC-02.2** Given I signed out, when I press Back, then no cart or catalog data is rendered from cache.
-- **AC-02.3** Given profile `dev`/`e2e`, signing out also ends the Local AS session (`/logout`) so the next login shows the form.
+- **AC-02.3** Given profile `dev`/`e2e`, signing out also ends the Local AS session (OIDC logout at `/connect/logout`) so the next login shows the form.
 
 ### US-03 Browse the catalog
 

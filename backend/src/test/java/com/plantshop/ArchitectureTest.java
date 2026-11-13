@@ -1,5 +1,6 @@
 package com.plantshop;
 
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 import static com.tngtech.archunit.library.GeneralCodingRules.NO_CLASSES_SHOULD_ACCESS_STANDARD_STREAMS;
 import static com.tngtech.archunit.library.GeneralCodingRules.NO_CLASSES_SHOULD_USE_FIELD_INJECTION;
@@ -56,6 +57,18 @@ class ArchitectureTest {
   @ArchTest
   static final ArchRule NO_FIELD_INJECTION =
       NO_CLASSES_SHOULD_USE_FIELD_INJECTION.allowEmptyShould(true);
+
+  /** NFR-SEC-08: Local AS configuration can only ever load with the dev or e2e profile. */
+  @ArchTest
+  static final ArchRule LOCAL_AUTH_IS_PROFILE_GATED =
+      classes()
+          .that()
+          .resideInAPackage("com.plantshop.auth.local..")
+          .and()
+          .areAnnotatedWith(org.springframework.context.annotation.Configuration.class)
+          .should()
+          .beAnnotatedWith(org.springframework.context.annotation.Profile.class)
+          .allowEmptyShould(true);
 
   @ArchTest static final ArchRule NO_STANDARD_STREAMS = NO_CLASSES_SHOULD_ACCESS_STANDARD_STREAMS;
 

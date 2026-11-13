@@ -66,7 +66,7 @@ Both services exclude `target/`, `node_modules/`, `dist/`, `coverage/`, `.git`, 
 | `SPRING_PROFILES_ACTIVE` | `e2e` | ✔ (`prod`) | Profile ([§5](#5-profiles)) |
 | `DB_URL` | `jdbc:mysql://mysql:3306/plantshop?…` | ✔ | JDBC URL |
 | `DB_USERNAME` / `DB_PASSWORD` | `plantshop` / `plantshop-dev` | ✔ | App DB user |
-| `APP_AUTH_MODE` | from profile | | `github` · `local` · `github,local` |
+| `APP_AUTH_MODE` | from profile (`dev`/`e2e`: `local`, otherwise `github`) | | `github` · `local` · `github,local`; not passed by compose (an empty value would override the profile default) |
 | `APP_AUTH_LOCAL_ISSUER` | `http://127.0.0.1:8080` | — | Local AS issuer |
 | `APP_AUTH_LOCAL_SPA_REDIRECT_URI` | `http://127.0.0.1:3000/auth/callback` | — | Local client redirect |
 | `APP_LOCAL_USER_PASSWORD` | `plants-dev-only` | — (rejected in prod) | Password for all in-memory users |
@@ -89,7 +89,7 @@ Both services exclude `target/`, `node_modules/`, `dist/`, `coverage/`, `.git`, 
 | `AUTH_PROVIDER` | `local` | `local` · `github` |
 | `AUTH_AUTHORIZE_URL` | `http://127.0.0.1:8080/oauth2/authorize` | |
 | `AUTH_TOKEN_URL` | `http://127.0.0.1:8080/oauth2/token` | github: `…/api/v1/auth/token` |
-| `AUTH_LOGOUT_URL` | `http://127.0.0.1:8080/logout` | empty in github mode |
+| `AUTH_LOGOUT_URL` | `http://127.0.0.1:8080/connect/logout` | empty in github mode |
 | `AUTH_CLIENT_ID` | `plant-spa` | github: OAuth App client id (public value) |
 | `AUTH_SCOPE` | `openid catalog.read cart.read cart.write` | github: `read:user` |
 | `AUTH_REDIRECT_URI` | `http://127.0.0.1:3000/auth/callback` | |

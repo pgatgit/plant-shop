@@ -13,14 +13,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.plantshop.auth.security.ProblemAccessDeniedHandler;
-import com.plantshop.auth.security.ProblemAuthenticationEntryPoint;
-import com.plantshop.auth.security.ProblemResponseWriter;
-import com.plantshop.auth.security.SecurityConfig;
 import com.plantshop.catalog.mapper.ProductMapperImpl;
 import com.plantshop.catalog.service.ProductQuery;
 import com.plantshop.catalog.service.ProductService;
 import com.plantshop.catalog.service.ProductSort;
+import com.plantshop.support.WebMvcSecurityTestConfig;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -36,13 +33,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(ProductController.class)
-@Import({
-  SecurityConfig.class,
-  ProblemResponseWriter.class,
-  ProblemAuthenticationEntryPoint.class,
-  ProblemAccessDeniedHandler.class,
-  ProductMapperImpl.class
-})
+@Import({WebMvcSecurityTestConfig.class, ProductMapperImpl.class})
 @Tag("US-03")
 class ProductControllerTest {
 
