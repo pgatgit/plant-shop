@@ -7,7 +7,7 @@
 #   --secret id=maven_settings,src=~/.m2/settings.xml  Maven settings (mirrors/proxies)
 
 ########################  build  ########################
-FROM eclipse-temurin:17-jdk-noble AS build
+FROM eclipse-temurin:24-jdk-noble AS build
 WORKDIR /workspace
 
 RUN --mount=type=secret,id=extra_ca,required=false \
@@ -38,7 +38,7 @@ RUN --mount=type=cache,target=/root/.m2 \
          --destination target/extracted
 
 ########################  runtime  ########################
-FROM eclipse-temurin:17-jre-noble AS runtime
+FROM eclipse-temurin:24-jre-noble AS runtime
 
 ARG VERSION=dev
 ARG REVISION=unknown
