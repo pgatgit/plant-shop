@@ -14,10 +14,17 @@ public enum ProblemCode {
   UNAUTHENTICATED("unauthenticated", "Authentication required", HttpStatus.UNAUTHORIZED),
   FORBIDDEN("forbidden", "Access denied", HttpStatus.FORBIDDEN),
   NOT_FOUND("not-found", "Resource not found", HttpStatus.NOT_FOUND),
+  PRODUCT_NOT_FOUND("product-not-found", "Product not found", HttpStatus.NOT_FOUND),
+  CART_ITEM_NOT_FOUND("cart-item-not-found", "Cart item not found", HttpStatus.NOT_FOUND),
   METHOD_NOT_ALLOWED("method-not-allowed", "Method not allowed", HttpStatus.METHOD_NOT_ALLOWED),
   NOT_ACCEPTABLE("not-acceptable", "Not acceptable", HttpStatus.NOT_ACCEPTABLE),
   UNSUPPORTED_MEDIA_TYPE(
       "unsupported-media-type", "Unsupported media type", HttpStatus.UNSUPPORTED_MEDIA_TYPE),
+  OUT_OF_STOCK("out-of-stock", "Out of stock", HttpStatus.CONFLICT),
+  QUANTITY_LIMIT_EXCEEDED(
+      "quantity-limit-exceeded", "Quantity limit exceeded", HttpStatus.CONFLICT),
+  CONCURRENT_MODIFICATION(
+      "concurrent-modification", "Concurrent modification", HttpStatus.CONFLICT),
   RATE_LIMITED("rate-limited", "Too many requests", HttpStatus.TOO_MANY_REQUESTS),
   INTERNAL_ERROR("internal-error", "Internal server error", HttpStatus.INTERNAL_SERVER_ERROR),
   AUTH_PROVIDER_UNAVAILABLE(

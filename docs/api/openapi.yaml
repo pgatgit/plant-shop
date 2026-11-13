@@ -12,6 +12,8 @@ servers:
 security:
 - oauth2: []
 tags:
+- description: The signed-in shopper's cart
+  name: Cart
 - description: The signed-in shopper
   name: Account
 - description: GitHub sign-in support
@@ -60,6 +62,226 @@ paths:
       summary: Exchange a GitHub authorization code for an access token
       tags:
       - Auth
+  /api/v1/cart:
+    get:
+      description: Returns the cart with **current** prices and stock. An empty cart
+        is returned if the shopper has never added anything. Requires scope `cart.read`.
+      operationId: getCart
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Cart"
+          description: The cart
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+          description: Missing or invalid access token
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+          description: Token lacks scope cart.read
+        "503":
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+          description: The identity provider could not validate the token
+      summary: Get the cart
+      tags:
+      - Cart
+  /api/v1/cart/items:
+    post:
+      description: "Adds `quantity` (default 1) of a product. If the product is already\
+        \ in the cart its line is increased. A line may hold at most min(stock, 10).\
+        \ Requires scope `cart.write`."
+      operationId: addCartItem
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddCartItemRequest"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Cart"
+          description: The updated cart
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+          description: "Invalid body (`validation-failed`, `malformed-request`)"
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+          description: Missing or invalid access token
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+          description: Token lacks scope cart.write
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+          description: '`product-not-found`'
+        "409":
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+          description: "`out-of-stock`, `quantity-limit-exceeded` (with `limit`, `requested`,\
+            \ `productId`) or `concurrent-modification`; the cart is unchanged"
+        "503":
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+          description: The identity provider could not validate the token
+      summary: Add a product to the cart
+      tags:
+      - Cart
+  /api/v1/cart/items/{productId}:
+    delete:
+      description: Removes the product's line from the cart. Requires scope `cart.write`.
+      operationId: removeCartItem
+      parameters:
+      - description: Product id of the line
+        in: path
+        name: productId
+        required: true
+        schema:
+          type: integer
+          format: int64
+          exclusiveMinimum: true
+          minimum: 0
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Cart"
+          description: The updated cart
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+          description: Invalid product id
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+          description: Missing or invalid access token
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+          description: Token lacks scope cart.write
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+          description: '`cart-item-not-found`'
+        "409":
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+          description: '`concurrent-modification`'
+        "503":
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+          description: The identity provider could not validate the token
+      summary: Remove a line
+      tags:
+      - Cart
+    patch:
+      description: "Sets the quantity of the product's line (1–10). Decreasing is\
+        \ always allowed; increasing is limited to min(stock, 10). Requires scope\
+        \ `cart.write`."
+      operationId: updateCartItem
+      parameters:
+      - description: Product id of the line
+        in: path
+        name: productId
+        required: true
+        schema:
+          type: integer
+          format: int64
+          exclusiveMinimum: true
+          minimum: 0
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateCartItemRequest"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Cart"
+          description: The updated cart
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+          description: Invalid body or product id
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+          description: Missing or invalid access token
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+          description: Token lacks scope cart.write
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+          description: '`cart-item-not-found`'
+        "409":
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+          description: "`out-of-stock`, `quantity-limit-exceeded` or `concurrent-modification`;\
+            \ the cart is unchanged"
+        "503":
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+          description: The identity provider could not validate the token
+      summary: Change a line's quantity
+      tags:
+      - Cart
   /api/v1/me:
     get:
       description: Requires any valid access token.
@@ -167,6 +389,110 @@ paths:
       - Catalog
 components:
   schemas:
+    AddCartItemRequest:
+      type: object
+      properties:
+        productId:
+          type: integer
+          format: int64
+          example: 11
+          exclusiveMinimum: true
+          minimum: 0
+        quantity:
+          type: integer
+          format: int32
+          default: 1
+          example: 1
+          maximum: 10
+          minimum: 1
+      required:
+      - productId
+    Cart:
+      type: object
+      properties:
+        currency:
+          type: string
+          enum:
+          - USD
+          example: USD
+        itemCount:
+          type: integer
+          format: int32
+          example: 2
+          minimum: 0
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/CartItem"
+        subtotal:
+          type: string
+          format: decimal
+          example: "53.98"
+          pattern: "^\\d{1,10}\\.\\d{2}$"
+      required:
+      - currency
+      - itemCount
+      - items
+      - subtotal
+    CartItem:
+      type: object
+      properties:
+        imagePath:
+          type: string
+          example: /images/plants/frn-birdnest.svg
+        lineTotal:
+          type: string
+          format: decimal
+          description: unitPrice × quantity
+          example: "53.98"
+          pattern: "^\\d{1,8}\\.\\d{2}$"
+        maxQuantity:
+          type: integer
+          format: int32
+          description: "min(stock, 10); 0 when out of stock"
+          example: 3
+          maximum: 10
+          minimum: 0
+        name:
+          type: string
+          example: Bird's Nest Fern
+        productId:
+          type: integer
+          format: int64
+          example: 11
+        quantity:
+          type: integer
+          format: int32
+          example: 2
+          maximum: 10
+          minimum: 1
+        stock:
+          type: integer
+          format: int32
+          example: 3
+          minimum: 0
+        stockStatus:
+          type: string
+          enum:
+          - OK
+          - INSUFFICIENT
+          - OUT_OF_STOCK
+        unitPrice:
+          type: string
+          format: decimal
+          description: "Current unit price (prices are live, never snapshotted)"
+          example: "26.99"
+          pattern: "^\\d{1,8}\\.\\d{2}$"
+      required:
+      - imagePath
+      - lineTotal
+      - maxQuantity
+      - name
+      - productId
+      - quantity
+      - stock
+      - stockStatus
+      - unitPrice
     Category:
       type: object
       properties:
@@ -275,7 +601,9 @@ components:
       type: object
       additionalProperties: true
       description: "RFC 9457 Problem Details. Extension members depend on `code`,\
-        \ e.g. `errors` for validation-failed or `minLength`/`maxLength` for invalid-search-term."
+        \ e.g. `errors` for validation-failed, `minLength`/`maxLength` for invalid-search-term,\
+        \ `limit`/`requested`/`productId` for quantity-limit-exceeded. `traceId` identifies\
+        \ the request in the server logs."
       properties:
         code:
           type: string
@@ -286,9 +614,14 @@ components:
           - unauthenticated
           - forbidden
           - not-found
+          - product-not-found
+          - cart-item-not-found
           - method-not-allowed
           - not-acceptable
           - unsupported-media-type
+          - out-of-stock
+          - quantity-limit-exceeded
+          - concurrent-modification
           - rate-limited
           - internal-error
           - auth-provider-unavailable
@@ -304,6 +637,20 @@ components:
           type: string
           format: uri
           example: /api/v1/products
+        limit:
+          type: integer
+          format: int32
+          description: Highest allowed line quantity
+          example: 3
+        productId:
+          type: integer
+          format: int64
+          description: Product concerned
+        requested:
+          type: integer
+          format: int32
+          description: Rejected quantity
+          example: 4
         status:
           type: integer
           format: int32
@@ -311,6 +658,10 @@ components:
         title:
           type: string
           example: Validation failed
+        traceId:
+          type: string
+          description: "Trace id of the request, for support"
+          example: 6f1c2b9a0d4e8f7a6f1c2b9a0d4e8f7a
         type:
           type: string
           format: uri
@@ -428,6 +779,17 @@ components:
       - access_token
       - scope
       - token_type
+    UpdateCartItemRequest:
+      type: object
+      properties:
+        quantity:
+          type: integer
+          format: int32
+          example: 3
+          maximum: 10
+          minimum: 1
+      required:
+      - quantity
   securitySchemes:
     oauth2:
       description: Authorization Code with PKCE. Local AS (dev/e2e) or GitHub (prod).

@@ -14,9 +14,16 @@ import io.swagger.v3.oas.annotations.media.Schema;
  */
 @Schema(name = "TokenRequest", description = "application/x-www-form-urlencoded body")
 public record TokenRequestForm(
-    @JsonProperty("grant_type") @Schema(allowableValues = "authorization_code") String grantType,
-    @JsonProperty("code") String code,
-    @JsonProperty("redirect_uri") @Schema(example = "http://127.0.0.1:3000/auth/callback")
+    @JsonProperty("grant_type")
+        @Schema(allowableValues = "authorization_code", requiredMode = Schema.RequiredMode.REQUIRED)
+        String grantType,
+    @JsonProperty("code") @Schema(requiredMode = Schema.RequiredMode.REQUIRED) String code,
+    @JsonProperty("redirect_uri")
+        @Schema(
+            example = "http://127.0.0.1:3000/auth/callback",
+            requiredMode = Schema.RequiredMode.REQUIRED)
         String redirectUri,
-    @JsonProperty("client_id") String clientId,
-    @JsonProperty("code_verifier") @Schema(minLength = 43, maxLength = 128) String codeVerifier) {}
+    @JsonProperty("client_id") @Schema(requiredMode = Schema.RequiredMode.REQUIRED) String clientId,
+    @JsonProperty("code_verifier")
+        @Schema(minLength = 43, maxLength = 128, requiredMode = Schema.RequiredMode.REQUIRED)
+        String codeVerifier) {}

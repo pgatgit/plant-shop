@@ -17,4 +17,13 @@
   <Match>
     <Class name="~.*MapperImpl"/>
   </Match>
+  <!--
+    HRS_REQUEST_PARAMETER_TO_HTTP_HEADER: the X-Request-Id value is only echoed after matching
+    [A-Za-z0-9._-]{1,64}, so it cannot contain CR/LF; anything else is replaced by a UUID
+    (RequestIdFilterTest covers the rejected inputs).
+  -->
+  <Match>
+    <Class name="com.plantshop.common.web.RequestIdFilter"/>
+    <Bug pattern="HRS_REQUEST_PARAMETER_TO_HTTP_HEADER"/>
+  </Match>
 </FindBugsFilter>

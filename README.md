@@ -4,8 +4,8 @@ A small, production-grade web store for indoor plants: browse a paged catalog, s
 name (prefix, case- and accent-insensitive) and manage a cart. Every page requires login: GitHub
 in production, local in-memory users for development and E2E.
 
-> **Status:** milestones **M0–M2** complete (tooling, catalog API, authentication). The cart API and
-> the SPA follow in M3–M6 per the [implementation roadmap](docs/plan/12-implementation-roadmap.md).
+> **Status:** milestones **M0–M3** complete (tooling, catalog API, authentication, cart API). The
+> SPA follows in M4–M6 per the [implementation roadmap](docs/plan/12-implementation-roadmap.md).
 
 | Part | Tech | Docs |
 |---|---|---|

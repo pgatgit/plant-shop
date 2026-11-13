@@ -2,6 +2,7 @@ package com.plantshop.catalog.service;
 
 import com.plantshop.catalog.domain.Product;
 import com.plantshop.catalog.repository.ProductRepository;
+import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -36,5 +37,15 @@ public class ProductService {
         .search()
         .map(term -> products.findByNameStartingWith(term.value(), pageable))
         .orElseGet(() -> products.findAll(pageable));
+  }
+
+  /**
+   * Finds one product, e.g. to add it to a cart.
+   *
+   * @param id the product id
+   * @return the product, if it exists
+   */
+  public Optional<Product> findById(long id) {
+    return products.findById(id);
   }
 }

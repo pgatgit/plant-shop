@@ -1,5 +1,6 @@
 package com.plantshop.common.error;
 
+import com.plantshop.common.web.Correlation;
 import java.net.URI;
 import java.util.Map;
 import org.springframework.http.ProblemDetail;
@@ -27,7 +28,8 @@ public final class ProblemFactory {
   }
 
   /**
-   * Adds {@code type}, {@code title}, {@code code} and {@code instance} to an existing problem.
+   * Adds {@code type}, {@code title}, {@code code}, {@code instance} and, when tracing is active,
+   * {@code traceId} to an existing problem.
    *
    * @param problem the problem to decorate in place
    * @param code the problem code
@@ -40,5 +42,6 @@ public final class ProblemFactory {
     if (instance != null) {
       problem.setInstance(URI.create(instance));
     }
+    Correlation.currentTraceId().ifPresent(traceId -> problem.setProperty("traceId", traceId));
   }
 }
