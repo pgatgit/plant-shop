@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" role="img" aria-labelledby="t">
+<title id="t">Illustration of a Calathea Orbifolia</title>
+<rect width="200" height="200" rx="16" fill="hsl(143 35% 95%)"/>
+<ellipse cx="100" cy="182" rx="46" ry="6" fill="#00000014"/>
+<path d="M100 128 L71.3 117.1" stroke="hsl(143 35% 26%)" stroke-width="2.5"/><ellipse cx="64.1" cy="114.4" rx="13.8" ry="24.7" transform="rotate(-69.3 64.1 114.4)" fill="hsl(151 40% 44%)"/><path d="M100 128 L81.4 98.9" stroke="hsl(143 35% 26%)" stroke-width="2.5"/><ellipse cx="76.8" cy="91.7" rx="13.5" ry="23.2" transform="rotate(-32.6 76.8 91.7)" fill="hsl(143 45% 34%)"/><path d="M100 128 L102.9 90.2" stroke="hsl(143 35% 26%)" stroke-width="2.5"/><ellipse cx="103.6" cy="80.8" rx="13.2" ry="26.8" transform="rotate(4.3 103.6 80.8)" fill="hsl(151 40% 44%)"/><path d="M100 128 L123.8 98.6" stroke="hsl(143 35% 26%)" stroke-width="2.5"/><ellipse cx="129.7" cy="91.3" rx="15.1" ry="27.4" transform="rotate(39 129.7 91.3)" fill="hsl(143 45% 34%)"/><path d="M100 128 L126.7 117.7" stroke="hsl(143 35% 26%)" stroke-width="2.5"/><ellipse cx="133.4" cy="115.2" rx="15.6" ry="25.1" transform="rotate(69 133.4 115.2)" fill="hsl(151 40% 44%)"/>
+<path d="M66 128 H134 L126 180 H74 Z" fill="#d9d2c5"/>
+<rect x="62" y="124" width="76" height="12" rx="3" fill="#d9d2c5"/>
+<rect x="62" y="124" width="76" height="4" rx="2" fill="#ffffff33"/>
+
+</svg>

@@ -23,6 +23,9 @@
 
     <!-- Library versions (verified at M0, see docs/plan/adr/013) -->
     <archunit.version>1.5.1</archunit.version>
+    <mapstruct.version>1.6.3</mapstruct.version>
+    <springdoc.version>3.2.0</springdoc.version>
+    <openapi-validator.version>2.46.1</openapi-validator.version>
 
     <!-- Build tooling versions -->
     <spotless.version>3.11.0</spotless.version>
@@ -41,6 +44,9 @@
     <!-- JaCoCo agent arguments are filled in by prepare-agent goals -->
     <surefireArgLine/>
     <failsafeArgLine/>
+
+    <!-- Set to true (or use -Pupdate-openapi) to rewrite docs/api/openapi.yaml -->
+    <openapi.update>false</openapi.update>
   </properties>
 
   <dependencies>
@@ -60,6 +66,37 @@
       <groupId>io.micrometer</groupId>
       <artifactId>micrometer-registry-prometheus</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-security</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-flyway</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.flywaydb</groupId>
+      <artifactId>flyway-mysql</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.mysql</groupId>
+      <artifactId>mysql-connector-j</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mapstruct</groupId>
+      <artifactId>mapstruct</artifactId>
+      <version>${mapstruct.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springdoc</groupId>
+      <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+      <version>${springdoc.version}</version>
+    </dependency>
 
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -75,12 +112,58 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-webmvc-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-jpa-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-security-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-testcontainers</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>testcontainers-mysql</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>testcontainers-junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.atlassian.oai</groupId>
+      <artifactId>swagger-request-validator-core</artifactId>
+      <version>${openapi-validator.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>com.tngtech.archunit</groupId>
       <artifactId>archunit-junit5</artifactId>
       <version>${archunit.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+  <profiles>
+    <profile>
+      <!-- Regenerates the committed OpenAPI contract: ./mvnw verify -Pupdate-openapi -->
+      <id>update-openapi</id>
+      <properties>
+        <openapi.update>true</openapi.update>
+      </properties>
+    </profile>
+  </profiles>
 
   <build>
     <finalName>plant-shop-backend</finalName>
@@ -124,11 +207,30 @@
         <configuration>
           <release>${java.version}</release>
           <parameters>true</parameters>
+          <annotationProcessorPaths>
+            <path>
+              <groupId>org.mapstruct</groupId>
+              <artifactId>mapstruct-processor</artifactId>
+              <version>${mapstruct.version}</version>
+            </path>
+          </annotationProcessorPaths>
           <compilerArgs>
             <arg>-Xlint:all,-processing</arg>
             <arg>-Werror</arg>
           </compilerArgs>
         </configuration>
+        <executions>
+          <execution>
+            <!-- MapStruct options only for main code: test compilation has no mappers. -->
+            <id>default-compile</id>
+            <configuration>
+              <compilerArgs combine.children="append">
+                <arg>-Amapstruct.defaultComponentModel=spring</arg>
+                <arg>-Amapstruct.unmappedTargetPolicy=ERROR</arg>
+              </compilerArgs>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
 
       <plugin>
@@ -311,6 +413,9 @@
         <artifactId>maven-failsafe-plugin</artifactId>
         <configuration>
           <argLine>@{failsafeArgLine}</argLine>
+          <systemPropertyVariables>
+            <openapi.update>${openapi.update}</openapi.update>
+          </systemPropertyVariables>
           <includes>
             <include>**/*IT.java</include>
           </includes>

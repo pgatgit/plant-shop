@@ -123,6 +123,8 @@ RFC 9457 Problem Details via Spring's `ProblemDetail` + `@RestControllerAdvice G
 }
 ```
 
+`traceId` is added together with request/trace ids in M3; until then problems carry every other member shown above.
+
 | `code` | Status | When |
 |---|---|---|
 | `validation-failed` | 400 | Bean Validation; body has `errors: [{field, message, rejectedValue}]` |

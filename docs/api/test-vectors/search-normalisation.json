@@ -1,0 +1,107 @@
+{
+  "$comment": "Shared search-normalisation vectors (BR-04). Used by backend SearchTermTest and frontend normalizeQuery tests. Whitespace = Unicode White_Space; length = code points; outcome: search | none (no search) | invalid (400 invalid-search-term).",
+  "vectors": [
+    {
+      "description": "plain term",
+      "input": "mon",
+      "normalized": "mon",
+      "outcome": "search"
+    },
+    {
+      "description": "case is preserved (matching is case-insensitive in the database)",
+      "input": "MON",
+      "normalized": "MON",
+      "outcome": "search"
+    },
+    {
+      "description": "trims and collapses inner whitespace",
+      "input": "  peace   li ",
+      "normalized": "peace li",
+      "outcome": "search"
+    },
+    {
+      "description": "tabs and newlines count as whitespace",
+      "input": "\tBoston\nFern ",
+      "normalized": "Boston Fern",
+      "outcome": "search"
+    },
+    {
+      "description": "no-break space is Unicode White_Space",
+      "input": " snake  plant ",
+      "normalized": "snake plant",
+      "outcome": "search"
+    },
+    {
+      "description": "ideographic space is Unicode White_Space",
+      "input": "zz　plant",
+      "normalized": "zz plant",
+      "outcome": "search"
+    },
+    {
+      "description": "accents are kept (matching is accent-insensitive in the database)",
+      "input": "Crème",
+      "normalized": "Crème",
+      "outcome": "search"
+    },
+    {
+      "description": "apostrophe is ordinary text",
+      "input": "Bird's",
+      "normalized": "Bird's",
+      "outcome": "search"
+    },
+    {
+      "description": "LIKE wildcards are ordinary text",
+      "input": "%_",
+      "normalized": "%_",
+      "outcome": "search"
+    },
+    {
+      "description": "exactly 2 characters",
+      "input": "ab",
+      "normalized": "ab",
+      "outcome": "search"
+    },
+    {
+      "description": "exactly 50 characters",
+      "input": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "normalized": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "outcome": "search"
+    },
+    {
+      "description": "astral characters count as one each (code points)",
+      "input": "🌿🌿",
+      "normalized": "🌿🌿",
+      "outcome": "search"
+    },
+    {
+      "description": "empty string means no search",
+      "input": "",
+      "normalized": "",
+      "outcome": "none"
+    },
+    {
+      "description": "whitespace only means no search",
+      "input": " \t\n ",
+      "normalized": "",
+      "outcome": "none"
+    },
+    {
+      "description": "1 character is too short",
+      "input": " m ",
+      "normalized": "m",
+      "outcome": "invalid"
+    },
+    {
+      "description": "1 astral character is too short",
+      "input": "🌿",
+      "normalized": "🌿",
+      "outcome": "invalid"
+    },
+    {
+      "description": "51 characters is too long",
+      "input": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "normalized": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "outcome": "invalid"
+    }
+  ]
+}

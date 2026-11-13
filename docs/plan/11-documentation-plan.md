@@ -58,7 +58,7 @@
 
 ## 4. OpenAPI / Swagger conventions
 
-- **Code-first** with springdoc; the committed `docs/api/openapi.yaml` is the contract and changes only through reviewed PRs (snapshot test, [09 §3.5](09-testing-strategy.md#35-contract-tests)).
+- **Code-first** with springdoc, emitting **OpenAPI 3.0** (`springdoc.api-docs.version=openapi_3_0`, chosen for validator and `openapi-typescript` compatibility); an `OpenApiCustomizer` marks every non-nullable property `required` and replaces springdoc's `ProblemDetail` schema with the real wire format; the committed `docs/api/openapi.yaml` is the contract and changes only through reviewed PRs (snapshot test, [09 §3.5](09-testing-strategy.md#35-contract-tests)).
 - `OpenApiConfig`: `info` (title "Plant Shop API", version from build, contact, license), servers (`http://127.0.0.1:8080`), security scheme `oauth2` (authorizationCode + PKCE, URLs per auth mode — [07 §8](07-auth-design.md#8-swagger-ui-authorize)), global security requirement, tags `Catalog`, `Cart`, `Account`, `Auth`.
 - Every operation has: `operationId` (`listProducts`, `getCart`, `addCartItem`, `updateCartItem`, `removeCartItem`, `getMe`, `exchangeToken`), summary, description, required scopes in description, all response codes from [04 §4](04-backend-design.md#4-rest-api-contract) with `ProblemDetail` schema and named examples (e.g. `quantity-limit-exceeded`).
 - Schemas: `@Schema` on records with `example`s, `format: decimal` + pattern for money strings, enums documented.

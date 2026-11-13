@@ -39,7 +39,7 @@ Backend security is wired in M2; until then M1 endpoints are tested with `spring
 
 ### M3 — Cart API
 
-**Tasks** (test-first): V3 already applied; `Cart`, `CartItem`, `LineLimit`, `CartService` with optimistic locking/retry, `CartView` with `stockStatus`, `CartController`, Problem codes, concurrency IT, owner isolation IT, metrics.
+**Tasks** (test-first): `RequestIdFilter` + Micrometer Tracing ids in logs and `traceId` in problems (NFR-OBS-02, moved from M1); V3 already applied; `Cart`, `CartItem`, `LineLimit`, `CartService` with optimistic locking/retry, `CartView` with `stockStatus`, `CartController`, Problem codes, concurrency IT, owner isolation IT, metrics.
 **Depends on**: M2. **DoD**: US-06…09 backend ACs covered; OpenAPI snapshot updated.
 
 ### M4 — SPA shell & login
@@ -88,3 +88,10 @@ Commands run and their outcome (pass/fail counts), coverage numbers vs gates, li
 | Prefix-only search surprises users ("Monstera" ≠ "Swiss Cheese Monstera") | Med | Low | Accepted (D9); empty-state copy explains "start with" |
 | Indefinite cart retention / no data deletion | Low | Low | Documented; out of scope |
 | Single instance in-memory caches/rate limits | Low | Low | Documented limit (NFR-REL-07) |
+
+## 6. Implementation notes (deviations recorded per milestone)
+
+| Milestone | Note |
+|---|---|
+| M0 | google-java-format 1.28.0 / Checkstyle 10.26.1 (newest versions that run on Java 17); TypeScript 6.0 (typescript-eslint does not support 7 yet); ESLint 10 with an npm override for `eslint-plugin-jsx-a11y`; boundaries via core `no-restricted-imports`; Dockerfiles accept optional `extra_ca`/`maven_settings` build secrets. |
+| M1 | OpenAPI emitted as 3.0 (validator/tooling compatibility). Contract validation uses `swagger-request-validator-core` 2.46.1 with an own MockMvc adapter. Money is a `String` DTO field formatted by `Money.format` (same wire format as planned). Until M2 the API chain has authorization rules but no token validation, so the running API answers 401; ITs use MockMvc with mock principals instead of RestClient + real tokens (switched in M2). `traceId` in problems moved to M3. Accented fixture rows are inserted with bound parameters, not inline `@Sql` literals. |

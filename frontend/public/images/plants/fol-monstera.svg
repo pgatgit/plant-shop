@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" role="img" aria-labelledby="t">
+<title id="t">Illustration of a Monstera Deliciosa</title>
+<rect width="200" height="200" rx="16" fill="hsl(103 35% 95%)"/>
+<ellipse cx="100" cy="182" rx="46" ry="6" fill="#00000014"/>
+<path d="M100 128 L64.5 114.3" stroke="hsl(103 35% 26%)" stroke-width="2.5"/><ellipse cx="55.7" cy="110.9" rx="16.6" ry="22.5" transform="rotate(-68.9 55.7 110.9)" fill="hsl(111 40% 44%)"/><path d="M100 128 L78.8 100.2" stroke="hsl(103 35% 26%)" stroke-width="2.5"/><ellipse cx="73.5" cy="93.3" rx="15.5" ry="27.4" transform="rotate(-37.3 73.5 93.3)" fill="hsl(103 45% 34%)"/><path d="M100 128 L93.8 93.2" stroke="hsl(103 35% 26%)" stroke-width="2.5"/><ellipse cx="92.3" cy="84.4" rx="16.8" ry="27.6" transform="rotate(-10.1 92.3 84.4)" fill="hsl(111 40% 44%)"/><path d="M100 128 L110.7 95.2" stroke="hsl(103 35% 26%)" stroke-width="2.5"/><ellipse cx="113.3" cy="87" rx="13.7" ry="27.1" transform="rotate(18 113.3 87)" fill="hsl(103 45% 34%)"/><path d="M100 128 L123.1 99.4" stroke="hsl(103 35% 26%)" stroke-width="2.5"/><ellipse cx="128.8" cy="92.3" rx="14.9" ry="24.4" transform="rotate(38.9 128.8 92.3)" fill="hsl(111 40% 44%)"/><path d="M100 128 L130.6 117.9" stroke="hsl(103 35% 26%)" stroke-width="2.5"/><ellipse cx="138.3" cy="115.4" rx="14.7" ry="27.5" transform="rotate(71.8 138.3 115.4)" fill="hsl(103 45% 34%)"/>
+<path d="M66 128 H134 L126 180 H74 Z" fill="#b65f3e"/>
+<rect x="62" y="124" width="76" height="12" rx="3" fill="#b65f3e"/>
+<rect x="62" y="124" width="76" height="4" rx="2" fill="#ffffff33"/>
+
+</svg>

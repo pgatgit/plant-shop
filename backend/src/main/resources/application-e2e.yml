@@ -1,4 +1,12 @@
 # Compose stack used by `docker compose up` (default) and by the E2E suite.
+spring:
+  flyway:
+    locations: classpath:db/migration,classpath:db/e2e
+
+app:
+  swagger:
+    enabled: ${APP_SWAGGER_ENABLED:true}
+
 logging:
   structured:
     format:

@@ -50,7 +50,7 @@
 
 - **AC-05.1** Given I type `mon` in the search box, when 300 ms pass without typing, then I see only products whose **name starts with** "mon" ignoring case — e.g. *Monstera Deliciosa* — and **not** *Swiss Cheese Monstera* (prefix-only, D9).
 - **AC-05.2** `MON`, `Mon` and `mon` return identical results; accented and unaccented forms match (`creme` matches a name starting `Crème…`; verified with test-only fixture rows since the seed catalog has no accented names — [09 §5](09-testing-strategy.md#5-test-data-strategy)).
-- **AC-05.3** Input is trimmed and inner whitespace collapsed (`"  peace   li "` → `peace li`).
+- **AC-05.3** Input is trimmed and inner whitespace collapsed (`"  peace   li "` → `peace li`). Whitespace means the Unicode `White_Space` property (so no-break spaces count); length is measured in code points. Shared vectors: [`docs/api/test-vectors/search-normalisation.json`](../api/test-vectors/search-normalisation.json).
 - **AC-05.4** Given fewer than 2 characters after normalisation, then no search is sent and the full catalog is shown, with hint "Type at least 2 characters".
 - **AC-05.5** Search combines with sort and resets to page 1; URL holds `?q=`.
 - **AC-05.6** Given no match, then I see "No plants start with "xyz"" and a "Clear search" button.
@@ -94,7 +94,7 @@
 | BR-01 | Every API except `/api/v1/auth/token`, health, OpenAPI/Swagger (when enabled) and Local AS endpoints requires authentication | Backend security; SPA guard |
 | BR-02 | Page size default 12, allowed 1–48; page index 0-based in API, 1-based in UI URL | API validation; SPA mapping |
 | BR-03 | Sort whitelist: `name`, `price` × `asc`/`desc`; tie-breakers `name`, `id` | API |
-| BR-04 | Search normalisation: trim, collapse whitespace, length 2–50 after normalisation, else 400 | API + SPA (same algorithm, tested in both) |
+| BR-04 | Search normalisation: collapse Unicode whitespace runs to one space, trim; empty → no search; length 2–50 code points after normalisation, else 400 `invalid-search-term` | API + SPA (same algorithm, tested in both) |
 | BR-05 | Search semantics: prefix on `name`, case- & accent-insensitive via `utf8mb4_0900_ai_ci`; LIKE wildcards escaped | Repository |
 | BR-06 | One cart per owner, created lazily on first add; never expires | Cart service |
 | BR-07 | Re-adding a product increments its line | Cart service |
