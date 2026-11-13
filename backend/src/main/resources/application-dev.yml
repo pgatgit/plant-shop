@@ -1,0 +1,4 @@
+# Local development: apps run on the host against MySQL from compose.
+logging:
+  level:
+    com.plantshop: DEBUG

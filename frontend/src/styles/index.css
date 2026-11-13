@@ -1,0 +1,20 @@
+@import 'tailwindcss';
+
+/* Design tokens (docs/plan/05-frontend-design.md §8). Colours chosen for WCAG 2.2 AA contrast. */
+@theme {
+  --color-brand-50: #f1f7f2;
+  --color-brand-100: #dcebdf;
+  --color-brand-600: #2f6b3a;
+  --color-brand-700: #25552e;
+  --color-brand-800: #1c4123;
+  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

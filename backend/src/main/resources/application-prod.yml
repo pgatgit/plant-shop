@@ -1,0 +1,5 @@
+# Production: GitHub login only, JSON logs, Swagger off unless explicitly enabled.
+logging:
+  structured:
+    format:
+      console: ${LOGGING_STRUCTURED_FORMAT_CONSOLE:ecs}
