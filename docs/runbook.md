@@ -39,6 +39,9 @@ All share the password from `APP_LOCAL_USER_PASSWORD` (default `plants-dev-only`
 3. Sign in as `shopper` in the pop-up. The pop-up closes when done.
 4. **Close** the dialog, expand an operation, click **Try it out**, then **Execute**.
 
+The **Cart** operations act on the signed-in user's own cart: `POST /api/v1/cart/items` with
+`{"productId": <id>}` adds one; product ids come from `GET /api/v1/products`.
+
 ## 3. Run with GitHub login (on your own machine)
 
 The browser must reach `127.0.0.1:3000` on the machine running the stack, so do this locally, not
@@ -158,9 +161,30 @@ Never edit an applied migration; add a new `V{n}__*.sql`
 | Browser: CORS error | The page origin is not in `APP_CORS_ALLOWED_ORIGINS` (use `http://127.0.0.1:3000`, not `localhost`). |
 | GitHub: "redirect_uri is not associated with this application" | Callback URL in the OAuth App is not `http://127.0.0.1/`, or the redirect URI is missing from `APP_GITHUB_ALLOWED_REDIRECT_URIS`. |
 | Flyway `checksum mismatch` | An applied migration was edited. Revert it, or reset a local DB with `docker compose down -v`. |
+| `409 quantity-limit-exceeded` / `out-of-stock` | A cart line may hold at most min(stock, 10); `limit` in the body says how many. |
+| `409 concurrent-modification` | Two requests changed the same cart at once and the automatic retry also conflicted. Repeat the request. |
 | Port already in use | Another process uses 3000, 8080 or 3306; stop it or change the published port in `compose.yaml`. |
 
-## 8. Rotating the GitHub client secret
+## 8. Tracing a request in the logs
+
+Every response has an `X-Request-Id` header (a caller may send its own, up to 64 characters of
+`A-Z a-z 0-9 . _ -`), and every error body has a `traceId`. Both appear on each log line of that
+request: in `e2e`/`prod` as the ECS JSON fields `requestId` and `traceId`, in `dev` as
+`[<traceId>-<spanId>]` after the thread name. Authenticated requests also log `ownerHash`, the first 8 hex
+characters of SHA-256 of the owner id, never the id itself:
+
+```bash
+docker compose logs backend | grep <traceId>
+```
+
+Cart mutations are counted in `plantshop_cart_mutations_total{op,outcome}`. The management port
+8081 is not published, so read it from inside the container:
+
+```bash
+docker compose exec backend curl -s http://127.0.0.1:8081/actuator/prometheus | grep plantshop_cart
+```
+
+## 9. Rotating the GitHub client secret
 
 Generate a new secret on the OAuth App page, update `GITHUB_CLIENT_SECRET`, restart the backend
 (`docker compose up -d backend`), then delete the old secret on GitHub.

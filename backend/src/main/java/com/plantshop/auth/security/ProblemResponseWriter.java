@@ -1,6 +1,7 @@
 package com.plantshop.auth.security;
 
 import com.plantshop.common.error.ProblemCode;
+import com.plantshop.common.web.Correlation;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -47,6 +48,7 @@ public class ProblemResponseWriter {
     body.put("detail", detail);
     body.put("instance", request.getRequestURI());
     body.put("code", code.slug());
+    Correlation.currentTraceId().ifPresent(traceId -> body.put("traceId", traceId));
     response.setStatus(code.status().value());
     response.setContentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE);
     jsonMapper.writeValue(response.getOutputStream(), body);

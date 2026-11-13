@@ -12,6 +12,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.filter.CorsFilter;
 
@@ -32,6 +33,7 @@ public class SecurityConfig {
    * @param accessDeniedHandler 403 problem writer
    * @param rateLimiter token-exchange rate limiter (GitHub mode only)
    * @param problems problem writer for 429 responses
+   * @param currentUsers resolves the owner logged as {@code ownerHash}
    * @return the chain
    * @throws Exception if the configuration is invalid
    */
@@ -43,7 +45,8 @@ public class SecurityConfig {
       ProblemAuthenticationEntryPoint entryPoint,
       ProblemAccessDeniedHandler accessDeniedHandler,
       ObjectProvider<TokenExchangeRateLimiter> rateLimiter,
-      ProblemResponseWriter problems)
+      ProblemResponseWriter problems,
+      CurrentUserResolver currentUsers)
       throws Exception {
     http.securityMatcher("/api/**")
         .cors(Customizer.withDefaults())
@@ -72,6 +75,7 @@ public class SecurityConfig {
                     .accessDeniedHandler(accessDeniedHandler))
         .exceptionHandling(
             e -> e.authenticationEntryPoint(entryPoint).accessDeniedHandler(accessDeniedHandler));
+    http.addFilterAfter(new OwnerMdcFilter(currentUsers), BearerTokenAuthenticationFilter.class);
     TokenExchangeRateLimiter limiter = rateLimiter.getIfAvailable();
     if (limiter != null) {
       http.addFilterAfter(new TokenExchangeRateLimitFilter(limiter, problems), CorsFilter.class);

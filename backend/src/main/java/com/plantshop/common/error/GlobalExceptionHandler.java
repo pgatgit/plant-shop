@@ -3,12 +3,15 @@ package com.plantshop.common.error;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.method.ParameterErrors;
+import org.springframework.validation.method.ParameterValidationResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -36,6 +39,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
   @ExceptionHandler(ApiException.class)
   public ResponseEntity<ProblemDetail> handleApiException(
       ApiException ex, HttpServletRequest request) {
+    LOG.debug("Request rejected with {}: {}", ex.code().slug(), ex.getMessage());
     ProblemDetail problem =
         ProblemFactory.create(ex.code(), ex.getMessage(), request.getRequestURI(), ex.properties());
     return ResponseEntity.status(ex.code().status()).body(problem);
@@ -67,17 +71,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
       HttpStatusCode status,
       WebRequest request) {
     List<FieldError> errors =
-        ex.getParameterValidationResults().stream()
-            .flatMap(
-                result ->
-                    result.getResolvableErrors().stream()
-                        .map(
-                            error ->
-                                new FieldError(
-                                    result.getMethodParameter().getParameterName(),
-                                    error.getDefaultMessage(),
-                                    result.getArgument())))
-            .toList();
+        ex.getParameterValidationResults().stream().flatMap(this::fieldErrors).toList();
     return validationFailed(errors, headers, request);
   }
 
@@ -114,6 +108,27 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
       LOG.debug("Request rejected with status {}: {}", status.value(), ex.getMessage());
     }
     return super.handleExceptionInternal(ex, problem, headers, status, request);
+  }
+
+  /**
+   * Field errors of one parameter. A {@code @Valid} body is reported per bean property (e.g. {@code
+   * quantity}), a simple parameter under its own name (e.g. {@code size}).
+   */
+  private Stream<FieldError> fieldErrors(ParameterValidationResult result) {
+    if (result instanceof ParameterErrors beanErrors) {
+      return beanErrors.getFieldErrors().stream()
+          .map(
+              error ->
+                  new FieldError(
+                      error.getField(), error.getDefaultMessage(), error.getRejectedValue()));
+    }
+    return result.getResolvableErrors().stream()
+        .map(
+            error ->
+                new FieldError(
+                    result.getMethodParameter().getParameterName(),
+                    error.getDefaultMessage(),
+                    result.getArgument()));
   }
 
   private ResponseEntity<Object> validationFailed(
