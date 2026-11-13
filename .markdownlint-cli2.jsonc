@@ -1,0 +1,11 @@
+{
+  // markdownlint rules for README/docs (docs/plan/10-code-quality-and-conventions.md §3)
+  "config": {
+    "default": true,
+    "MD013": false, // line length: prose and tables wrap naturally
+    "MD033": { "allowed_elements": ["br"] }, // <br/> inside Mermaid labels and tables
+    "MD024": { "siblings_only": true },
+    "MD060": false // table column alignment style
+  },
+  "ignores": ["**/node_modules/**", "frontend/playwright-report/**", "frontend/coverage/**"]
+}
