@@ -62,7 +62,7 @@ Target distribution (by count): unit ~55 %, slice/component ~25 %, integration ~
 | CORS preflight from allowed origin / disallowed origin | headers present / 403 without CORS headers |
 | Local AS full Authorization Code + PKCE flow (MockMvc: authorize → login → code → token) | JWT with expected scopes |
 | PKCE missing for `plant-spa` | `invalid_request` |
-| `prod` profile context | Local AS beans absent; `/oauth2/authorize` 404; startup fails if `APP_AUTH_MODE=local` |
+| `prod` profile context | Local AS beans absent; `/oauth2/authorize`, `/login`, `/oauth2/jwks` → 401 (deny-all chain); start-up validator rejects `local` in prod (unit test) |
 | Secret/token never logged (OutputCaptureExtension) | ✔ |
 | Owner isolation: user A cannot see/modify user B's cart | ✔ |
 
@@ -118,7 +118,7 @@ Per decision D17.
 | Req | Unit | Slice/Component | Integration / Security / Contract | E2E |
 |---|---|---|---|---|
 | US-01 Sign in | PKCE KAT, returnTo validation, `TokenExchangeService` | `RequireAuth`, `CallbackPage`, `TokenExchangeController` WebMvc | Local AS PKCE flow IT; GitHub exchange + check (WireMock) IT | auth.spec, swagger.spec |
-| US-02 Sign out | — | `UserMenu` logout clears cache | Local AS `/logout` IT | auth.spec |
+| US-02 Sign out | — | `UserMenu` logout clears cache | Local AS `/connect/logout` IT | auth.spec |
 | US-03 Browse | URL↔API mapping | `CatalogPage` states, `Pagination`, `ProductCard` | `ProductsIT` paging, size bounds | catalog.spec |
 | US-04 Sort | `ProductService` sort whitelist | `SortSelect` resets page | `ProductsIT` 4 orders + tie-breakers | catalog.spec |
 | US-05 Search | `SearchTerm`, `normalizeQuery` (shared vectors) | `SearchBox` debounce/cancel/min-length; `ProductRepository` @DataJpaTest (case, accents, wildcards) | `SearchIT`, `SearchExplainIT` | search.spec |

@@ -18,7 +18,10 @@ public enum ProblemCode {
   NOT_ACCEPTABLE("not-acceptable", "Not acceptable", HttpStatus.NOT_ACCEPTABLE),
   UNSUPPORTED_MEDIA_TYPE(
       "unsupported-media-type", "Unsupported media type", HttpStatus.UNSUPPORTED_MEDIA_TYPE),
-  INTERNAL_ERROR("internal-error", "Internal server error", HttpStatus.INTERNAL_SERVER_ERROR);
+  RATE_LIMITED("rate-limited", "Too many requests", HttpStatus.TOO_MANY_REQUESTS),
+  INTERNAL_ERROR("internal-error", "Internal server error", HttpStatus.INTERNAL_SERVER_ERROR),
+  AUTH_PROVIDER_UNAVAILABLE(
+      "auth-provider-unavailable", "Sign-in service unavailable", HttpStatus.SERVICE_UNAVAILABLE);
 
   /** Base of all problem {@code type} URIs; they are identifiers and need not resolve. */
   public static final String TYPE_BASE = "https://plantshop.example/problems/";

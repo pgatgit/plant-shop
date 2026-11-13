@@ -1,34 +1,37 @@
 package com.plantshop.auth.security;
 
+import com.plantshop.auth.github.TokenExchangeRateLimitFilter;
+import com.plantshop.auth.github.TokenExchangeRateLimiter;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.security.autoconfigure.actuate.web.servlet.EndpointRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.filter.CorsFilter;
 
 /**
- * HTTP security (docs/plan/04-backend-design.md §7, docs/plan/07-auth-design.md).
- *
- * <p>M1 state: every API endpoint requires an authenticated principal with the right scope, but no
- * token validation is wired yet, so the running API answers 401 to everyone. M2 adds the OAuth2
- * resource server (GitHub token check and the dev/e2e Local AS) to the API chain.
+ * HTTP security (docs/plan/04-backend-design.md §7, docs/plan/07-auth-design.md). Chain order:
+ * Local AS endpoints (order 1, dev/e2e only) → API (2) → actuator (3) → API docs (4) → Local AS
+ * login page (5, dev/e2e only) → deny everything else (100).
  */
 @Configuration(proxyBeanMethods = false)
 public class SecurityConfig {
-
-  /** Scope required to read the catalog. */
-  public static final String SCOPE_CATALOG_READ = "SCOPE_catalog.read";
 
   /**
    * Stateless bearer-token chain for {@code /api/**}.
    *
    * @param http the security builder
-   * @param entryPoint 401 problem writer
+   * @param tokenResolver picks the token validator (Local AS JWT or GitHub)
+   * @param entryPoint 401/503 problem writer
    * @param accessDeniedHandler 403 problem writer
+   * @param rateLimiter token-exchange rate limiter (GitHub mode only)
+   * @param problems problem writer for 429 responses
    * @return the chain
    * @throws Exception if the configuration is invalid
    */
@@ -36,23 +39,43 @@ public class SecurityConfig {
   @Order(2)
   public SecurityFilterChain apiSecurityFilterChain(
       HttpSecurity http,
+      TokenAuthenticationManagerResolver tokenResolver,
       ProblemAuthenticationEntryPoint entryPoint,
-      ProblemAccessDeniedHandler accessDeniedHandler)
+      ProblemAccessDeniedHandler accessDeniedHandler,
+      ObjectProvider<TokenExchangeRateLimiter> rateLimiter,
+      ProblemResponseWriter problems)
       throws Exception {
     http.securityMatcher("/api/**")
+        .cors(Customizer.withDefaults())
         .csrf(AbstractHttpConfigurer::disable)
         .httpBasic(AbstractHttpConfigurer::disable)
         .formLogin(AbstractHttpConfigurer::disable)
         .logout(AbstractHttpConfigurer::disable)
+        .requestCache(AbstractHttpConfigurer::disable)
         .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(
             auth ->
-                auth.requestMatchers(HttpMethod.GET, "/api/v1/products")
-                    .hasAuthority(SCOPE_CATALOG_READ)
+                auth.requestMatchers(HttpMethod.POST, TokenExchangeRateLimitFilter.PATH)
+                    .permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/v1/products")
+                    .hasAuthority(Scopes.authority(Scopes.CATALOG_READ))
+                    .requestMatchers(HttpMethod.GET, "/api/v1/cart")
+                    .hasAuthority(Scopes.authority(Scopes.CART_READ))
+                    .requestMatchers("/api/v1/cart/**")
+                    .hasAuthority(Scopes.authority(Scopes.CART_WRITE))
                     .anyRequest()
                     .authenticated())
+        .oauth2ResourceServer(
+            rs ->
+                rs.authenticationManagerResolver(tokenResolver)
+                    .authenticationEntryPoint(entryPoint)
+                    .accessDeniedHandler(accessDeniedHandler))
         .exceptionHandling(
             e -> e.authenticationEntryPoint(entryPoint).accessDeniedHandler(accessDeniedHandler));
+    TokenExchangeRateLimiter limiter = rateLimiter.getIfAvailable();
+    if (limiter != null) {
+      http.addFilterAfter(new TokenExchangeRateLimitFilter(limiter, problems), CorsFilter.class);
+    }
     return http.build();
   }
 

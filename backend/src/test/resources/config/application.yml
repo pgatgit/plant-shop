@@ -1,0 +1,8 @@
+# Test-only defaults (src/test/resources/config/ overrides the main application.yml; profile-specific
+# files such as application-dev.yml still win). Never packaged into the application.
+app:
+  github:
+    client-id: test-client-id
+    client-secret: test-client-secret-value
+  cors:
+    allowed-origins: http://127.0.0.1:3000

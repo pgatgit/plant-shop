@@ -3,9 +3,8 @@
 Spring Boot 4.1 (Java 17) REST API for the Plant Shop: catalog, cart, name search and the OAuth2
 resource server. Design: [docs/plan/04-backend-design.md](../docs/plan/04-backend-design.md).
 
-> **Status:** M1 done: schema, seed catalog and `GET /api/v1/products` (listing, sorting, prefix
-> search). Until M2 wires token validation, every API call answers 401. Auth arrives in M2, the
-> cart in M3.
+> **Status:** M2 done: catalog API plus OAuth2 in both modes (GitHub tokens in `prod`, the embedded
+> Local Authorization Server with in-memory users in `dev`/`e2e`). The cart arrives in M3.
 
 ## Prerequisites
 
@@ -49,6 +48,19 @@ logs). Details: [08 §5](../docs/plan/08-docker-and-environments.md#5-profiles).
 | Endpoint | Scope | Notes |
 |---|---|---|
 | `GET /api/v1/products?page&size&sort&q` | `catalog.read` | Page-number pagination (default 12, max 48), `sort` ∈ `name,asc`·`name,desc`·`price,asc`·`price,desc`, `q` = case/accent-insensitive **name prefix** (2–50 chars) |
+| `GET /api/v1/me` | any valid token | The signed-in shopper (`ownerId`, `displayName`, `avatarUrl`, `provider`) |
+| `POST /api/v1/auth/token` | public, 10/min/IP | GitHub mode only: Authorization Code + PKCE exchange; the backend adds the client secret |
+
+## Authentication
+
+`app.auth.mode` selects token sources: `github` (default; `prod`), `local` (default in `dev`/`e2e`)
+or `github,local`. `TokenAuthenticationManagerResolver` routes a JWT issued by the Local AS to the
+in-process decoder and everything else to `GitHubTokenIntrospector`, which calls GitHub's "check a
+token" API and caches results (5 minutes valid, 30 seconds invalid). `AuthStartupValidator`
+refuses to start with unsafe combinations (for example `local` in `prod`). The Local AS (dev/e2e
+only) serves `/oauth2/authorize`, `/oauth2/token`, `/oauth2/jwks`, `/login` and
+`/connect/logout`. See [07-auth-design](../docs/plan/07-auth-design.md) and the
+[runbook](../docs/runbook.md) for local users and GitHub setup.
 
 Errors are RFC 9457 Problem Details with a stable `code` (see `ProblemCode`). The contract is
 `docs/api/openapi.yaml`; `OpenApiSnapshotIT` fails on drift and every integration-test exchange is

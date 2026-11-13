@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 /**
@@ -21,7 +22,8 @@ import org.springframework.test.web.servlet.MockMvc;
  * equal the committed {@code docs/api/openapi.yaml}. Regenerate intentionally with {@code ./mvnw
  * verify -Pupdate-openapi}.
  */
-@SpringBootTest(properties = "app.swagger.enabled=true")
+@SpringBootTest(properties = {"app.swagger.enabled=true", "app.auth.mode=github,local"})
+@ActiveProfiles("dev")
 @AutoConfigureMockMvc
 @Import(MySqlTestcontainersConfiguration.class)
 class OpenApiSnapshotIT {

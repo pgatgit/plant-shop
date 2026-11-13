@@ -75,7 +75,7 @@ services:
       AUTH_PROVIDER: ${AUTH_PROVIDER:-local}
       AUTH_AUTHORIZE_URL: ${AUTH_AUTHORIZE_URL:-http://127.0.0.1:8080/oauth2/authorize}
       AUTH_TOKEN_URL: ${AUTH_TOKEN_URL:-http://127.0.0.1:8080/oauth2/token}
-      AUTH_LOGOUT_URL: ${AUTH_LOGOUT_URL-http://127.0.0.1:8080/logout}
+      AUTH_LOGOUT_URL: ${AUTH_LOGOUT_URL-http://127.0.0.1:8080/connect/logout}
       AUTH_CLIENT_ID: ${AUTH_CLIENT_ID:-plant-spa}
       AUTH_SCOPE: ${AUTH_SCOPE:-openid catalog.read cart.read cart.write}
       AUTH_REDIRECT_URI: ${AUTH_REDIRECT_URI:-http://127.0.0.1:3000/auth/callback}

@@ -66,6 +66,13 @@ public class ProductController {
           @Content(
               mediaType = PROBLEM_JSON,
               schema = @Schema(implementation = ProblemDetail.class)))
+  @ApiResponse(
+      responseCode = "503",
+      description = "The identity provider could not validate the token",
+      content =
+          @Content(
+              mediaType = PROBLEM_JSON,
+              schema = @Schema(implementation = ProblemDetail.class)))
   public PageResponse<ProductResponse> listProducts(
       @Parameter(description = "0-based page index") @RequestParam(defaultValue = "0") @Min(0)
           int page,

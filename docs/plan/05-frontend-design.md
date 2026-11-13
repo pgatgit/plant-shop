@@ -84,7 +84,7 @@ Mutations (`useAddToCart`, `useUpdateQuantity`, `useRemoveItem`) are **non-optim
     "provider": "local",
     "authorizeUrl": "http://127.0.0.1:8080/oauth2/authorize",
     "tokenUrl": "http://127.0.0.1:8080/oauth2/token",
-    "logoutUrl": "http://127.0.0.1:8080/logout",
+    "logoutUrl": "http://127.0.0.1:8080/connect/logout",
     "clientId": "plant-spa",
     "scope": "openid catalog.read cart.read cart.write",
     "redirectUri": "http://127.0.0.1:3000/auth/callback"

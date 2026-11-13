@@ -27,7 +27,7 @@ Each NFR has an ID, a measurable target and a verification method. "CI" = enforc
 | NFR-SEC-05 | Tokens/`Authorization` headers masked in logs | Log-capture test |
 | NFR-SEC-06 | CORS: exact-origin allowlist from env; no wildcard; no credentials | Security IT (allowed vs disallowed origin preflight) |
 | NFR-SEC-07 | Only tokens issued **for our OAuth App** are accepted (GitHub "check a token" API, not `/user`) | WireMock IT: foreign-app token → 401 |
-| NFR-SEC-08 | Local AS and in-memory users **impossible** in `prod` (bean absent; `/oauth2/**` → 404) | Profile IT |
+| NFR-SEC-08 | Local AS and in-memory users **impossible** in `prod` (beans absent; `/oauth2/**` and `/login` fall through to the deny-all chain → 401; start-up fails if mode contains `local`) | Profile IT |
 | NFR-SEC-09 | Rate limit on `/api/v1/auth/token`: 10 req/min/IP → 429 `Retry-After` | IT |
 | NFR-SEC-10 | Security headers from nginx: CSP (`default-src 'self'; connect-src 'self' ${API_ORIGIN}; img-src 'self' https://avatars.githubusercontent.com; frame-ancestors 'none'`), `Referrer-Policy: no-referrer`, `X-Content-Type-Options: nosniff`, `Permissions-Policy`; HSTS in prod behind TLS | E2E header assertions |
 | NFR-SEC-11 | Containers run as non-root; no secrets in images | CI image inspect step |
