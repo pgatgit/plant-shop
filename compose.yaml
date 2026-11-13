@@ -1,0 +1,105 @@
+# Plant Shop full stack. `docker compose up -d --build --wait` works from a clean checkout
+# (profile e2e, local login). Topology and variables: docs/plan/08-docker-and-environments.md.
+name: plantshop
+
+services:
+  mysql:
+    image: mysql:8.4
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_0900_ai_ci
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-plantshop}
+      MYSQL_USER: ${MYSQL_USER:-plantshop}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-plantshop-dev}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root-dev}
+    ports:
+      - "127.0.0.1:3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u$$MYSQL_USER -p$$MYSQL_PASSWORD --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 20s
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 1g
+    networks: [plantshop]
+
+  backend:
+    build:
+      context: ./backend
+    image: plantshop/backend:${IMAGE_TAG:-local}
+    init: true
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-e2e}
+      DB_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE:-plantshop}?useUnicode=true&characterEncoding=UTF-8&connectionTimeZone=UTC&forceConnectionTimeZoneToSession=true
+      DB_USERNAME: ${MYSQL_USER:-plantshop}
+      DB_PASSWORD: ${MYSQL_PASSWORD:-plantshop-dev}
+      APP_CORS_ALLOWED_ORIGINS: ${APP_CORS_ALLOWED_ORIGINS:-http://127.0.0.1:3000}
+      APP_SWAGGER_ENABLED: ${APP_SWAGGER_ENABLED:-true}
+      APP_LOCAL_USER_PASSWORD: ${APP_LOCAL_USER_PASSWORD:-plants-dev-only}
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID:-}
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET:-}
+      APP_GITHUB_ALLOWED_REDIRECT_URIS: ${APP_GITHUB_ALLOWED_REDIRECT_URIS:-http://127.0.0.1:3000/auth/callback,http://127.0.0.1:8080/swagger-ui/oauth2-redirect.html}
+    ports:
+      - "127.0.0.1:8080:8080"
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8081/actuator/health/readiness"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 60s
+    depends_on:
+      mysql:
+        condition: service_healthy
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 768m
+          cpus: "1.5"
+    networks: [plantshop]
+
+  frontend:
+    build:
+      context: ./frontend
+    image: plantshop/frontend:${IMAGE_TAG:-local}
+    environment:
+      API_BASE_URL: ${API_BASE_URL:-http://127.0.0.1:8080/api/v1}
+      API_ORIGIN: ${API_ORIGIN:-http://127.0.0.1:8080}
+      AUTH_PROVIDER: ${AUTH_PROVIDER:-local}
+      AUTH_AUTHORIZE_URL: ${AUTH_AUTHORIZE_URL:-http://127.0.0.1:8080/oauth2/authorize}
+      AUTH_TOKEN_URL: ${AUTH_TOKEN_URL:-http://127.0.0.1:8080/oauth2/token}
+      AUTH_LOGOUT_URL: ${AUTH_LOGOUT_URL-http://127.0.0.1:8080/logout}
+      AUTH_CLIENT_ID: ${AUTH_CLIENT_ID:-plant-spa}
+      AUTH_SCOPE: ${AUTH_SCOPE:-openid catalog.read cart.read cart.write}
+      AUTH_REDIRECT_URI: ${AUTH_REDIRECT_URI:-http://127.0.0.1:3000/auth/callback}
+    ports:
+      - "127.0.0.1:3000:8080"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/healthz"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 128m
+          cpus: "0.5"
+    networks: [plantshop]
+
+volumes:
+  mysql-data:
+
+networks:
+  plantshop:

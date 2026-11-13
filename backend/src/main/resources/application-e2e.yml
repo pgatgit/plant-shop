@@ -1,0 +1,5 @@
+# Compose stack used by `docker compose up` (default) and by the E2E suite.
+logging:
+  structured:
+    format:
+      console: ${LOGGING_STRUCTURED_FORMAT_CONSOLE:ecs}

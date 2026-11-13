@@ -1,0 +1,8 @@
+# E2E overrides used by CI and `npm run e2e` locally:
+#   docker compose -f compose.yaml -f compose.e2e.yaml up -d --build --wait
+services:
+  mysql:
+    ports: !reset []
+  backend:
+    environment:
+      SPRING_PROFILES_ACTIVE: e2e

@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<!DOCTYPE suppressions PUBLIC
+    "-//Checkstyle//DTD SuppressionFilter Configuration 1.2//EN"
+    "https://checkstyle.org/dtds/suppressions_1_2.dtd">
+<suppressions>
+  <!-- Tests: no Javadoc requirement (names + @DisplayName document behaviour). -->
+  <suppress files="[\\/]src[\\/]test[\\/]" checks="MissingJavadoc(Type|Method)|JavadocMethod"/>
+  <!-- Controllers/DTOs are documented via OpenAPI annotations; repositories and mappers are declarative. -->
+  <suppress files="[\\/](api|repository|mapper)[\\/]" checks="MissingJavadoc(Type|Method)|JavadocMethod"/>
+</suppressions>
