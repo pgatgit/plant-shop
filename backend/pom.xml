@@ -25,7 +25,7 @@
     <archunit.version>1.5.1</archunit.version>
     <mapstruct.version>1.6.3</mapstruct.version>
     <springdoc.version>3.2.0</springdoc.version>
-    <openapi-validator.version>2.46.1</openapi-validator.version>
+    <openapi-validator.version>3.0.0</openapi-validator.version>
 
     <!-- Build tooling versions -->
     <spotless.version>3.11.0</spotless.version>
